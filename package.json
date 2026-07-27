@@ -1,0 +1,16 @@
+{
+  "name": "skullking-web",
+  "version": "1.0.0",
+  "description": "Juego Web Multijugador en Tiempo Real para Skull King",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test_engine.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}

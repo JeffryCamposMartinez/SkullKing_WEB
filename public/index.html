@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skull King 🏴‍☠️ - Juego Competitivo Online</title>
+    <meta name="description" content="Juega al Skull King multijugador en tiempo real con amigos y bots piratas.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴‍☠️</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Outfit:wght@400;600;700&family=Rye&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- NOTIFICACIONES FLASH -->
+        <div id="toast-container"></div>
+
+        <!-- PANTALLA 1: INICIO / LOBBY -->
+        <section id="screen-lobby" class="screen active">
+            <div class="lobby-card glass-panel">
+                <header class="lobby-header">
+                    <h1 class="pirate-title">SKULL KING <span class="crown">👑</span></h1>
+                    <p class="subtitle">El Legendario Juego de Bazas Pirata</p>
+                </header>
+
+                <div class="user-setup">
+                    <label for="player-name">Tu Nombre de Capitán:</label>
+                    <input type="text" id="player-name" placeholder="Ej: Capitán Morgan" maxlength="15" autocomplete="off">
+                    
+                    <label>Elige tu Insignia / Avatar:</label>
+                    <div class="avatar-grid" id="avatar-selector">
+                        <button class="avatar-btn active" data-avatar="🏴‍☠️">🏴‍☠️</button>
+                        <button class="avatar-btn" data-avatar="🦜">🦜</button>
+                        <button class="avatar-btn" data-avatar="🧭">🧭</button>
+                        <button class="avatar-btn" data-avatar="⚓">⚓</button>
+                        <button class="avatar-btn" data-avatar="🐙">🐙</button>
+                        <button class="avatar-btn" data-avatar="👑">👑</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="btn-create-room" class="btn btn-gold btn-large">✨ Crear Nueva Mesa</button>
+                    <div class="divider"><span>O ÚNETE A UNA EXISTENTE</span></div>
+                    <div class="join-box">
+                        <input type="text" id="input-room-code" placeholder="CÓDIGO (Ej: A7X9)" maxlength="5" style="text-transform: uppercase;">
+                        <button id="btn-join-room" class="btn btn-secondary">Unirse 🚀</button>
+                    </div>
+                </div>
+
+                <!-- SALA DE ESPERA (Oculta al inicio) -->
+                <div id="waiting-room" class="waiting-room hidden">
+                    <div class="room-code-badge">
+                        <span>CÓDIGO DE SALA:</span>
+                        <strong id="display-room-code">----</strong>
+                        <button id="btn-copy-code" title="Copiar código">📋</button>
+                    </div>
+
+                    <h3>Capitanes en la Mesa (<span id="player-count">1</span>/6):</h3>
+                    <ul id="players-list" class="players-list"></ul>
+
+                    <div class="bot-controls" id="host-bot-controls">
+                        <button id="btn-add-bot" class="btn btn-small btn-bot">🤖 + Añadir Bot IA</button>
+                        <button id="btn-remove-bot" class="btn btn-small btn-bot-remove">❌ Quitar Bot</button>
+                    </div>
+
+                    <div class="start-container" id="host-start-container">
+                        <button id="btn-start-game" class="btn btn-gold btn-xl">🏴‍☠️ ¡ZARPAR E INICIAR PARTIDA!</button>
+                    </div>
+                    <p id="guest-waiting-msg" class="waiting-msg hidden">Esperando a que el anfitrión inicie la partida...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANTALLA 2: MESA DE JUEGO -->
+        <section id="screen-game" class="screen hidden">
+            <!-- BARRA SUPERIOR -->
+            <header class="game-topbar glass-panel">
+                <div class="top-info">
+                    <div class="round-badge">
+                        <span>RONDA</span>
+                        <strong id="display-round-num">1 / 10</strong>
+                    </div>
+                    <div class="turn-indicator" id="turn-indicator">
+                        Es el turno de: <span id="current-player-turn">---</span>
+                    </div>
+                    <div class="suit-indicator" id="suit-indicator">
+                        Palo Liderado: <span id="led-suit-badge">Ninguno (Libre)</span>
+                    </div>
+                </div>
+                <div class="top-actions">
+                    <button id="btn-toggle-sound" class="btn-icon" title="Sonido">🔊</button>
+                    <button id="btn-show-scores" class="btn btn-small btn-gold">📊 Tabla de Puntuaciones</button>
+                </div>
+            </header>
+
+            <!-- TAPETE CENTRAL (MESA DE JUEGO) -->
+            <main class="table-area">
+                <!-- GRAN BANNER DE TURNO -->
+                <div id="turn-banner" class="turn-banner hidden">
+                    <span class="turn-icon" id="turn-banner-icon">🔥</span>
+                    <span class="turn-text" id="turn-banner-text">¡ES TU TURNO DE JUGAR!</span>
+                </div>
+
+                <!-- BANNER GANADOR DE BAZA -->
+                <div id="trick-winner-banner" class="trick-winner-banner hidden">
+                    <span class="winner-icon" id="trick-winner-icon">🏆</span>
+                    <span class="winner-text" id="trick-winner-text">¡BAZA GANADA!</span>
+                </div>
+
+                <div class="felt-table glass-panel">
+                    <div id="trick-center" class="trick-center">
+                        <!-- Las cartas jugadas en la baza actual se renderizan aquí -->
+                        <div class="empty-table-msg" id="empty-table-msg">Esperando jugadas...</div>
+                    </div>
+                </div>
+
+                <!-- AVATARES DE OTROS JUGADORES (ALREDEDOR DE LA MESA) -->
+                <div id="opponents-container" class="opponents-container"></div>
+            </main>
+
+            <!-- ZONA INFERIOR: MANO DEL JUGADOR Y DECK -->
+            <footer class="player-hand-area glass-panel">
+                <div class="player-status">
+                    <div class="my-avatar" id="my-avatar-display">🏴‍☠️</div>
+                    <div class="my-stats">
+                        <div class="stat-box">
+                            <label>Apuesta:</label>
+                            <span id="my-bid-val">-</span>
+                        </div>
+                        <div class="stat-box">
+                            <label>Bazas Ganadas:</label>
+                            <span id="my-won-val">0</span>
+                        </div>
+                        <div class="stat-box gold">
+                            <label>Puntos Total:</label>
+                            <span id="my-total-score">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hand-carousel-container">
+                    <div id="player-hand" class="player-hand">
+                        <!-- Las cartas de mi mano se cargan aquí -->
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+        <!-- MODALES DE JUEGO -->
+
+        <!-- MODAL 1: APUESTAS "¡YO-HO-HO!" -->
+        <div id="modal-bidding" class="modal-overlay hidden">
+            <div class="modal-box glass-panel gold-border">
+                <h2 class="pirate-title">¡YO... HO... HO! 🤜🤛</h2>
+                <p>¿Cuántas bazas predecirás ganar en esta Ronda <span id="bidding-round-num">1</span>?</p>
+                <div class="bidding-hand-title">🃏 TU MANO EN ESTA RONDA (Evalúa tus cartas antes de decir ¡Yo-Ho-Ho!):</div>
+                <div id="bidding-hand-preview" class="bidding-hand-preview"></div>
+                
+                <div id="bidding-options" class="bidding-grid">
+                    <!-- Botones de apuesta (0 hasta roundNum) del 0 al N -->
+                </div>
+                <p class="bidding-hint">¡Recuerda: si aciertas exactamente tu apuesta, ganarás grandes puntos de bonificación!</p>
+            </div>
+        </div>
+
+        <!-- MODAL 2: ELECCIÓN DE LA TIGRESA (DUAL) -->
+        <div id="modal-tigresa" class="modal-overlay hidden">
+            <div class="modal-box glass-panel gold-border">
+                <h2 class="pirate-title">🐅 HAS JUGADO LA TIGRESA 🐅</h2>
+                <p>Esta carta es dual. ¿Cómo decides jugarla en esta baza?</p>
+                <div class="tigresa-choices">
+                    <button class="btn btn-gold btn-xl" id="btn-tigresa-pirata">
+                        <span class="icon">🏴‍☠️</span>
+                        <strong>Como PIRATA</strong>
+                        <small>Derrota cartas numeradas y Sirenas</small>
+                    </button>
+                    <button class="btn btn-secondary btn-xl" id="btn-tigresa-escape">
+                        <span class="icon">🏳️</span>
+                        <strong>Como ESCAPE</strong>
+                        <small>Valor 0 (Bandera Blanca)</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 3: TABLA DE PUNTUACIONES (SCOREBOARD) -->
+        <div id="modal-scoreboard" class="modal-overlay hidden">
+            <div class="modal-box glass-panel large-modal">
+                <header class="modal-header">
+                    <h2 class="pirate-title">📊 CUADERNO DE BITÁCORA Y PUNTUACIONES</h2>
+                    <button class="btn-close" id="btn-close-scoreboard">✖</button>
+                </header>
+                
+                <div class="scoreboard-content" id="scoreboard-table-container">
+                    <!-- Tabla generada dinámicamente -->
+                </div>
+
+                <footer class="modal-footer" id="round-end-controls">
+                    <button id="btn-next-round" class="btn btn-gold btn-large hidden">🏴‍☠️ Siguiente Ronda</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
