@@ -33,6 +33,7 @@ body {
     color: var(--text-main);
     font-family: var(--font-body);
     min-height: 100vh;
+    min-height: 100dvh;
     overflow-x: hidden;
     user-select: none;
 }
@@ -1007,5 +1008,459 @@ body {
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
+    }
+}
+
+/* ==========================================================================
+   ADAPTACIÓN 10000% MÓVIL Y NAVEGADORES RESPONSIVOS (PORTRAIT Y LANDSCAPE)
+   ========================================================================== */
+
+/* 1. MÓVIL EN VERTICAL (CELULAR NORMAL) Y PANTALLAS COMPACTAS (< 768px) */
+@media screen and (max-width: 768px) {
+    #screen-lobby {
+        padding: 15px;
+        align-items: flex-start;
+        overflow-y: auto;
+        min-height: 100dvh;
+    }
+
+    .lobby-card {
+        padding: 25px 15px;
+        margin: auto 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .lobby-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .user-setup input[type="text"] {
+        padding: 10px 14px;
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    .avatar-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .avatar-btn {
+        font-size: 1.6rem;
+        padding: 8px 0;
+    }
+
+    #screen-game {
+        padding: 8px;
+        gap: 8px;
+        height: 100dvh;
+        justify-content: space-between;
+    }
+
+    .game-topbar {
+        padding: 8px 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+        border-radius: 14px;
+    }
+
+    .top-info {
+        gap: 8px;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .round-badge {
+        padding: 4px 8px;
+    }
+
+    .round-badge span {
+        font-size: 0.65rem;
+    }
+
+    .round-badge strong {
+        font-size: 1rem;
+    }
+
+    .turn-indicator {
+        font-size: 0.85rem;
+    }
+
+    .suit-indicator {
+        font-size: 0.75rem;
+    }
+
+    .opponents-container {
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+    }
+
+    .opponent-box {
+        padding: 4px 8px;
+        gap: 6px;
+        border-radius: 20px;
+    }
+
+    .opponent-box .avatar {
+        font-size: 1.1rem;
+    }
+
+    .opponent-box .name {
+        font-size: 0.7rem;
+        max-width: 55px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .opponent-box .cards-count {
+        font-size: 0.65rem;
+        padding: 1px 5px;
+    }
+
+    .table-area {
+        min-height: 160px;
+        flex: 1;
+    }
+
+    .felt-table {
+        width: 96%;
+        height: 88%;
+        border-width: 6px;
+        border-radius: 50px;
+    }
+
+    .felt-table::after {
+        font-size: 6rem;
+    }
+
+    .played-card-slot img {
+        width: 60px;
+        border-radius: 6px;
+    }
+
+    .played-card-slot .player-tag {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        margin-top: 4px;
+    }
+
+    .turn-banner {
+        top: 45px;
+        padding: 8px 15px;
+        border-radius: 30px;
+        gap: 8px;
+        width: 90%;
+        justify-content: center;
+    }
+
+    .turn-banner.my-turn .turn-text, 
+    .turn-banner.opponent-turn .turn-text {
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+    }
+
+    .turn-banner .turn-icon {
+        font-size: 1.2rem !important;
+    }
+
+    .trick-winner-banner {
+        top: 85px;
+        padding: 8px 15px;
+        width: 92%;
+        justify-content: center;
+        border-radius: 30px;
+    }
+
+    .trick-winner-banner .winner-text,
+    .trick-winner-banner.my-victory .winner-text {
+        font-size: 1rem !important;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    .trick-winner-banner .winner-icon {
+        font-size: 1.5rem;
+    }
+
+    .player-hand-area {
+        height: auto;
+        min-height: 160px;
+        padding: 10px 8px;
+        gap: 8px;
+        flex-direction: column;
+        border-radius: 20px;
+    }
+
+    .player-status {
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+        padding-right: 0;
+        padding-bottom: 6px;
+        width: 100%;
+        justify-content: space-around;
+        gap: 10px;
+    }
+
+    .my-avatar {
+        width: 45px;
+        height: 45px;
+        font-size: 1.8rem;
+    }
+
+    .my-stats {
+        flex-direction: row;
+        gap: 10px;
+        justify-content: space-around;
+        width: 100%;
+    }
+
+    .stat-box {
+        width: auto;
+        font-size: 0.75rem;
+        gap: 5px;
+    }
+
+    .stat-box.gold span {
+        font-size: 0.85rem;
+    }
+
+    .hand-carousel-container {
+        padding: 8px 2px 12px 2px;
+        width: 100%;
+    }
+
+    .player-hand {
+        gap: 0;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .card-in-hand {
+        width: 70px;
+        margin-left: -24px;
+        border-radius: 6px;
+    }
+
+    .card-in-hand:hover {
+        transform: translateY(-20px) scale(1.12);
+        margin-right: 12px;
+    }
+
+    /* MODALES EN VERTICAL */
+    .modal-box {
+        width: 96%;
+        padding: 20px 12px;
+        border-radius: 16px;
+    }
+
+    .bidding-hand-preview img {
+        width: 55px;
+        margin-left: -15px;
+    }
+
+    .bidding-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        max-height: 200px;
+    }
+
+    .btn-bid {
+        padding: 10px 4px;
+        font-size: 1.1rem;
+    }
+
+    .btn-bid span {
+        font-size: 0.65rem;
+    }
+
+    .score-table th, .score-table td {
+        padding: 6px 4px;
+        font-size: 0.75rem;
+    }
+
+    .score-table .player-cell {
+        gap: 4px;
+        font-size: 0.75rem;
+    }
+
+    .tigresa-choices {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .tigresa-choices .btn {
+        width: 100%;
+        max-width: 240px;
+        padding: 12px;
+    }
+}
+
+/* 2. MÓVIL EN HORIZONTAL / APAISADO (LANDSCAPE < 600px ALTO COMO IPHONE EN CAPTURA) */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+    #screen-lobby {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: 10px 15px;
+        min-height: 100dvh;
+    }
+
+    .lobby-card {
+        margin: auto;
+        padding: 15px 20px;
+        max-width: 650px;
+    }
+
+    .lobby-header {
+        margin-bottom: 12px;
+    }
+
+    .lobby-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .user-setup {
+        margin-bottom: 15px;
+    }
+
+    .user-setup input[type="text"] {
+        padding: 8px 12px;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+    }
+
+    .avatar-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 6px;
+    }
+
+    .avatar-btn {
+        padding: 4px 0;
+        font-size: 1.3rem;
+    }
+
+    #screen-game {
+        padding: 6px;
+        gap: 6px;
+        height: 100dvh;
+    }
+
+    .game-topbar {
+        padding: 4px 12px;
+    }
+
+    .round-badge {
+        padding: 2px 8px;
+    }
+
+    .round-badge strong {
+        font-size: 0.9rem;
+    }
+
+    .table-area {
+        flex: 1;
+        min-height: 110px;
+    }
+
+    .felt-table {
+        width: 90%;
+        height: 94%;
+        border-width: 5px;
+        border-radius: 40px;
+    }
+
+    .felt-table::after {
+        font-size: 4rem;
+    }
+
+    .played-card-slot img {
+        width: 50px;
+    }
+
+    .player-hand-area {
+        height: 115px;
+        padding: 4px 12px;
+        gap: 15px;
+        flex-direction: row;
+    }
+
+    .player-status {
+        border-right: 1px solid var(--glass-border);
+        border-bottom: none;
+        padding-right: 12px;
+        padding-bottom: 0;
+        width: auto;
+        gap: 8px;
+    }
+
+    .my-avatar {
+        width: 38px;
+        height: 38px;
+        font-size: 1.4rem;
+    }
+
+    .my-stats {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .stat-box {
+        width: 105px;
+        font-size: 0.7rem;
+    }
+
+    .stat-box.gold span {
+        font-size: 0.8rem;
+    }
+
+    .hand-carousel-container {
+        padding: 4px 5px 6px 5px;
+    }
+
+    .card-in-hand {
+        width: 60px;
+        margin-left: -20px;
+    }
+
+    .card-in-hand:hover {
+        transform: translateY(-15px) scale(1.15);
+        margin-right: 12px;
+    }
+
+    .turn-banner {
+        top: 35px;
+        padding: 5px 15px;
+    }
+
+    .turn-banner.my-turn .turn-text, 
+    .turn-banner.opponent-turn .turn-text {
+        font-size: 0.85rem;
+    }
+
+    .trick-winner-banner {
+        top: 45px;
+        padding: 5px 15px;
+    }
+
+    .trick-winner-banner .winner-text {
+        font-size: 0.85rem !important;
+    }
+
+    .bidding-grid {
+        grid-template-columns: repeat(7, 1fr);
+        max-height: 130px;
+        gap: 6px;
+    }
+
+    .btn-bid {
+        padding: 6px 2px;
+        font-size: 1rem;
     }
 }
